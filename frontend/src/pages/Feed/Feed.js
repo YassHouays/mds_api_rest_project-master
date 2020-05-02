@@ -50,21 +50,28 @@ class Feed extends Component {
       page--;
       this.setState({ postPage: page });
     }
-    fetch('URL')
-      .then(res => {
-        if (res.status !== 200) {
-          throw new Error('Failed to fetch posts.');
-        }
-        return res.json();
-      })
-      .then(resData => {
-        this.setState({
-          posts: resData.posts,
-          totalPosts: resData.totalItems,
-          postsLoading: false
-        });
-      })
-      .catch(this.catchError);
+    fetch('http://localhost:3030/posts', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      mode: 'cors',
+    })
+    .then(res => {
+      if (res.status !== 200) {
+        throw new Error('Failed to fetch posts.');
+      }
+      return res.json();
+    })
+    .then(resData => {
+      this.setState({
+        posts: resData.posts,
+        totalPosts: resData.totalItems,
+        postsLoading: false
+      });
+    })
+    .catch(this.catchError);
   };
 
   statusUpdateHandler = event => {
@@ -106,13 +113,30 @@ class Feed extends Component {
       editLoading: true
     });
     // Set up data (with image!)
-    let url = 'URL';
+    //http://localhost:3030/posts/'+postId+'/delete'
+    console.log(postData);
+    let url = 'http://localhost:3030/posts/create';
+    let method = 'POST';
     if (this.state.editPost) {
-      url = 'URL';
+      const postId = this.state.editPost._id;
+      method = 'PUT';
+      url = 'http://localhost:3030/posts/'+postId+'/update';
     }
-
-    fetch(url)
-      .then(res => {
+    postData.creator= {name:'Yassine',id:'5ead7a968a3ca26b7179598b'};
+    fetch(url,{
+      method: method,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      mode: 'cors',
+      body: JSON.stringify({
+        title: postData.title,
+        content: postData.content,
+        image: (postData.image)?postData.image.name:'',
+        creator: postData.creator,
+      })
+    }).then(res => {
         if (res.status !== 200 && res.status !== 201) {
           throw new Error('Creating or editing a post failed!');
         }
@@ -161,7 +185,14 @@ class Feed extends Component {
 
   deletePostHandler = postId => {
     this.setState({ postsLoading: true });
-    fetch('URL')
+    fetch('http://localhost:3030/posts/'+postId+'/delete',{
+        method: 'DELETE',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        mode: 'cors',
+      })
       .then(res => {
         if (res.status !== 200 && res.status !== 201) {
           throw new Error('Deleting a post failed!');

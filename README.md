@@ -1,3 +1,12 @@
+Lors de l'installation, dans le dossier backend, créer un fichier .env avec votre propre connexion : 
+</br>
+NOSQL_HOST=xxxxxxxxxxxxxx </br>
+NOSQL_USER=xxxxxx </br>
+NOSQL_PWD=xxxxxxxxxxxxx </br>
+NOSQL_TABLE=xxxxxxxxxxxxxx
+
+
+
 # mds_api_rest_project
 API REST project
 
